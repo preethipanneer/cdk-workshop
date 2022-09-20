@@ -1,14 +1,592 @@
 {
  "Resources": {
+  "HelloHandlerServiceRole11EF7C63": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "CdkWorkshopStack/HelloHandler/ServiceRole/Resource"
+   }
+  },
+  "HelloHandler2E4FBA4D": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "14f7a852bfa6abda863009d67c659543f6daa0395822bee7fe0eaef3a72a7764.zip"
+    },
+    "Role": {
+     "Fn::GetAtt": [
+      "HelloHandlerServiceRole11EF7C63",
+      "Arn"
+     ]
+    },
+    "Handler": "hello.handler",
+    "Runtime": "nodejs14.x"
+   },
+   "DependsOn": [
+    "HelloHandlerServiceRole11EF7C63"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "CdkWorkshopStack/HelloHandler/Resource",
+    "aws:asset:path": "asset.14f7a852bfa6abda863009d67c659543f6daa0395822bee7fe0eaef3a72a7764",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "HelloHitCounterHits7AAEBF80": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "KeySchema": [
+     {
+      "AttributeName": "path",
+      "KeyType": "HASH"
+     }
+    ],
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "path",
+      "AttributeType": "S"
+     }
+    ],
+    "ProvisionedThroughput": {
+     "ReadCapacityUnits": 5,
+     "WriteCapacityUnits": 5
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "CdkWorkshopStack/HelloHitCounter/Hits/Resource"
+   }
+  },
+  "HelloHitCounterHitCounterHandlerServiceRoleD45002B8": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "CdkWorkshopStack/HelloHitCounter/HitCounterHandler/ServiceRole/Resource"
+   }
+  },
+  "HelloHitCounterHitCounterHandlerServiceRoleDefaultPolicy1487A60A": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:PutItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "HelloHitCounterHits7AAEBF80",
+          "Arn"
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": "lambda:InvokeFunction",
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "HelloHandler2E4FBA4D",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "HelloHandler2E4FBA4D",
+             "Arn"
+            ]
+           },
+           ":*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "HelloHitCounterHitCounterHandlerServiceRoleDefaultPolicy1487A60A",
+    "Roles": [
+     {
+      "Ref": "HelloHitCounterHitCounterHandlerServiceRoleD45002B8"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "CdkWorkshopStack/HelloHitCounter/HitCounterHandler/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "HelloHitCounterHitCounterHandlerDAEA7B37": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "14f7a852bfa6abda863009d67c659543f6daa0395822bee7fe0eaef3a72a7764.zip"
+    },
+    "Role": {
+     "Fn::GetAtt": [
+      "HelloHitCounterHitCounterHandlerServiceRoleD45002B8",
+      "Arn"
+     ]
+    },
+    "Environment": {
+     "Variables": {
+      "DOWNSTREAM_FUNCTION_NAME": {
+       "Ref": "HelloHandler2E4FBA4D"
+      },
+      "HITS_TABLE_NAME": {
+       "Ref": "HelloHitCounterHits7AAEBF80"
+      }
+     }
+    },
+    "Handler": "hitcounter.handler",
+    "Runtime": "nodejs14.x"
+   },
+   "DependsOn": [
+    "HelloHitCounterHitCounterHandlerServiceRoleDefaultPolicy1487A60A",
+    "HelloHitCounterHitCounterHandlerServiceRoleD45002B8"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "CdkWorkshopStack/HelloHitCounter/HitCounterHandler/Resource",
+    "aws:asset:path": "asset.14f7a852bfa6abda863009d67c659543f6daa0395822bee7fe0eaef3a72a7764",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "EndpointEEF1FD8F": {
+   "Type": "AWS::ApiGateway::RestApi",
+   "Properties": {
+    "Name": "Endpoint"
+   },
+   "Metadata": {
+    "aws:cdk:path": "CdkWorkshopStack/Endpoint/Resource"
+   }
+  },
+  "EndpointDeployment318525DA7a02bafcf1f33a692d15312adb602478": {
+   "Type": "AWS::ApiGateway::Deployment",
+   "Properties": {
+    "RestApiId": {
+     "Ref": "EndpointEEF1FD8F"
+    },
+    "Description": "Automatically created by the RestApi construct"
+   },
+   "DependsOn": [
+    "EndpointproxyANYC09721C5",
+    "Endpointproxy39E2174E",
+    "EndpointANY485C938B"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "CdkWorkshopStack/Endpoint/Deployment/Resource"
+   }
+  },
+  "EndpointDeploymentStageprodB78BEEA0": {
+   "Type": "AWS::ApiGateway::Stage",
+   "Properties": {
+    "RestApiId": {
+     "Ref": "EndpointEEF1FD8F"
+    },
+    "DeploymentId": {
+     "Ref": "EndpointDeployment318525DA7a02bafcf1f33a692d15312adb602478"
+    },
+    "StageName": "prod"
+   },
+   "Metadata": {
+    "aws:cdk:path": "CdkWorkshopStack/Endpoint/DeploymentStage.prod/Resource"
+   }
+  },
+  "Endpointproxy39E2174E": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "EndpointEEF1FD8F",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "{proxy+}",
+    "RestApiId": {
+     "Ref": "EndpointEEF1FD8F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "CdkWorkshopStack/Endpoint/Default/{proxy+}/Resource"
+   }
+  },
+  "EndpointproxyANYApiPermissionCdkWorkshopStackEndpoint018E8349ANYproxy747DCA52": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "HelloHitCounterHitCounterHandlerDAEA7B37",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "EndpointEEF1FD8F"
+       },
+       "/",
+       {
+        "Ref": "EndpointDeploymentStageprodB78BEEA0"
+       },
+       "/*/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "CdkWorkshopStack/Endpoint/Default/{proxy+}/ANY/ApiPermission.CdkWorkshopStackEndpoint018E8349.ANY..{proxy+}"
+   }
+  },
+  "EndpointproxyANYApiPermissionTestCdkWorkshopStackEndpoint018E8349ANYproxy41939001": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "HelloHitCounterHitCounterHandlerDAEA7B37",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "EndpointEEF1FD8F"
+       },
+       "/test-invoke-stage/*/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "CdkWorkshopStack/Endpoint/Default/{proxy+}/ANY/ApiPermission.Test.CdkWorkshopStackEndpoint018E8349.ANY..{proxy+}"
+   }
+  },
+  "EndpointproxyANYC09721C5": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "HttpMethod": "ANY",
+    "ResourceId": {
+     "Ref": "Endpointproxy39E2174E"
+    },
+    "RestApiId": {
+     "Ref": "EndpointEEF1FD8F"
+    },
+    "AuthorizationType": "NONE",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "HelloHitCounterHitCounterHandlerDAEA7B37",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "CdkWorkshopStack/Endpoint/Default/{proxy+}/ANY/Resource"
+   }
+  },
+  "EndpointANYApiPermissionCdkWorkshopStackEndpoint018E8349ANYE84BEB04": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "HelloHitCounterHitCounterHandlerDAEA7B37",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "EndpointEEF1FD8F"
+       },
+       "/",
+       {
+        "Ref": "EndpointDeploymentStageprodB78BEEA0"
+       },
+       "/*/"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "CdkWorkshopStack/Endpoint/Default/ANY/ApiPermission.CdkWorkshopStackEndpoint018E8349.ANY.."
+   }
+  },
+  "EndpointANYApiPermissionTestCdkWorkshopStackEndpoint018E8349ANYB6CC1B64": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "HelloHitCounterHitCounterHandlerDAEA7B37",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "EndpointEEF1FD8F"
+       },
+       "/test-invoke-stage/*/"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "CdkWorkshopStack/Endpoint/Default/ANY/ApiPermission.Test.CdkWorkshopStackEndpoint018E8349.ANY.."
+   }
+  },
+  "EndpointANY485C938B": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "HttpMethod": "ANY",
+    "ResourceId": {
+     "Fn::GetAtt": [
+      "EndpointEEF1FD8F",
+      "RootResourceId"
+     ]
+    },
+    "RestApiId": {
+     "Ref": "EndpointEEF1FD8F"
+    },
+    "AuthorizationType": "NONE",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "HelloHitCounterHitCounterHandlerDAEA7B37",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "CdkWorkshopStack/Endpoint/Default/ANY/Resource"
+   }
+  },
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/zPSMzHSM1RMLC/WTU7J1s3JTNKrDi5JTM7WcU7LC0otzi8tSk4FsZ3z81IySzLz82p18vJTUvWyivXLDM30DE30jBSzijMzdYtK80oyc1P1giA0ACa4uR1ZAAAA"
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/1WQwW6DMAyGn6X34AlW7d522qnTENu9MonHUkiCiLMOId59IXQSO/nzH/u3nQL2BeQ7vPlMqjbrdA3TO6NsRZQuU4emVgjTS7CStbPi9Gm3XNJgtPcxm4VGA1PlOloeUixdp+WY6hLNwj9e0HtiD4clxByOQbbER/Qk1GjROBVX+MB69UkwC+x1g0w3HGE6p50q8nzodZp1x2fqOzcasryomywe1CS3FWK9C4OkNLMc3M/4p9zdVn4l/nJqkVaaZ5GWXky0bcS26S1wH/hfe+STs0pz+hzrFMHVP3znT5DvodhdvdbZECxrQ1Ct8RcEZn94jQEAAA=="
    },
    "Metadata": {
     "aws:cdk:path": "CdkWorkshopStack/CDKMetadata/Default"
    },
    "Condition": "CDKMetadataAvailable"
+  }
+ },
+ "Outputs": {
+  "Endpoint8024A810": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "EndpointEEF1FD8F"
+      },
+      ".execute-api.",
+      {
+       "Ref": "AWS::Region"
+      },
+      ".",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "EndpointDeploymentStageprodB78BEEA0"
+      },
+      "/"
+     ]
+    ]
+   }
   }
  },
  "Conditions": {
